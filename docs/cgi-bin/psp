@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+#
+# Basic implementation of Perl Server Pages..
+# See example in ../table.psp
+#
+
+use strict;
+
+print "Content-Type: text/html\n\n";
+
+open FILE, "< $ENV{PATH_TRANSLATED}"
+	or print "Could not open PSP document: $ENV{PATH_TRANSLATED}";
+
+$/ = undef;
+
+defined( my $psp = <FILE> )
+    or die "Empty or invalid file: $ENV{PATH_TRANSLATED}";
+
+$psp = "</PERL>$psp<PERL>";
+$psp =~ s@%>|</PERL>@; printhtml <<ENDHTML;\n@ig;
+$psp =~ s@<%=@<% print @ig;
+$psp =~ s@<%|<PERL>@\nENDHTML\n@ig;
+
+sub printhtml {
+    (my $txt = $_[0]) =~ s/\n$//;
+    print $txt;
+}
+
+eval "use strict; $psp";
+
+if ( $@ ) {
+    my $l; $psp =~ s/^/++$l."> "/gem;
+    print "<plaintext>".(my $msg = <<ERROR);
+Error during execution of PSP script '$ENV{PATH_TRANSLATED}':
+$@
+
+Source:
+$psp
+ERROR
+    die $msg;
+}

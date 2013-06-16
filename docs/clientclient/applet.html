@@ -1,0 +1,29 @@
+<html><head><title>Client-Client Applet Application Demo</title></head><body><style>
+body { font: 12pt Arial; }
+</style>
+
+Loading applet, please wait..
+
+<applet name='WebServer' code='org/jhttpd/WebServer.class'
+   width=1 height=1 archive='jhttpd.jar,app.jar' style='display: none'
+   mayscript>
+  <param name='port' value='18089'>
+  <!-- javascript callbacks from applet -->
+  <param name='onload'  value='appletLoaded( "{0}", {1} );'>
+  <param name='onerror' value='appletFailed( "{0}" );'>
+</applet>
+
+<script>
+
+function appletLoaded( host, port ) {
+  var servletClass = "org.jhttpd.examples.HelloWorld";
+  top.frames[1].location = "http://localhost:"+port+"/"+servletClass+"/a?b=1";
+  alert( "Web Server loaded, switching frame to view servlet.." );
+  top.document.getElementById("fs").rows = "0,*";
+}
+
+function appletFailed( msg ) {
+  alert( "Applet load failed: "+msg );
+}
+
+</script>

@@ -1,0 +1,44 @@
+<html>
+<head><title>PSP Table Example</title></head>
+<body style='font: 10pt Arial'>
+<%
+
+use CGI qw(:all);
+
+my $cgi = CGI->new();
+my $rows = $cgi->param('rows')||0;
+my $cols = $cgi->param('cols')||0;
+
+warn "This should be logged... ${rows}x$cols";
+
+if ( !$rows ) { %>
+
+<h2>PSP table example</h2>
+
+<form><table>
+<tr><td>Rows:<td><input name=rows value=10>
+<tr><td>Cols:<td><input name=cols value=20>
+<tr><td colspan=2 align=right><input type=submit value='Build table'>
+</table>
+
+<p>
+Environment variables:<br>
+<% foreach my $key (sort keys %ENV) { %>
+   <b>$key:</b> $ENV{$key}<br>
+<% } %>
+
+<% } else { %>
+
+<b>Process id is:</b> $$<p>
+
+<table border='2px inset'>
+<% for ( my $r=0 ; $r<$rows ; $r++ ) { %>
+  <tr>
+  <% for ( my $c=0 ; $c<$cols ; $c++ ) { %>
+	<td> \$<%= $r+$c %>
+  <% } %>
+<% } %>
+</table>
+<%
+  exit( 99 );
+} %>
